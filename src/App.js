@@ -10,13 +10,13 @@ import { showNotification as show, checkWin } from './helpers/helpers';
 import './App.css';
 
 const words = ['application', 'programming', 'interface', 'wizard'];
-let selectedWord = words[Math.floor(Math.random() * words.length)];
 
 function App() {
   const [playable, setPlayable] = useState(true);
   const [correctLetters, setCorrectLetters] = useState([]);
   const [wrongLetters, setWrongLetters] = useState([]);
   const [showNotification, setShowNotification] = useState(false);
+  const [selectedWord, setSelectedWord] = useState(words[Math.floor(Math.random() * words.length)]);
 
   useEffect(() => {
     const handleKeydown = event => {
@@ -41,7 +41,13 @@ function App() {
     window.addEventListener('keydown', handleKeydown);
 
     return () => window.removeEventListener('keydown', handleKeydown);
-  }, [correctLetters, wrongLetters, playable]);
+  }, [correctLetters, wrongLetters, playable, selectedWord]);
+
+  useEffect(() => {
+    if (checkWin(correctLetters, wrongLetters, selectedWord)) {
+      setPlayable(false);
+    }
+  }, [correctLetters, wrongLetters, selectedWord]);
 
   function playAgain() {
     setPlayable(true);
@@ -51,7 +57,7 @@ function App() {
     setWrongLetters([]);
 
     const random = Math.floor(Math.random() * words.length);
-    selectedWord = words[random];
+    setSelectedWord(words[random]);
   }
 
   return (
